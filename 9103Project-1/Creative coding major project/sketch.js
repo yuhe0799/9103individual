@@ -13,6 +13,8 @@ let xCoor = 0;
 
 let cycleCounter = 0; // Initializes the loop counter
 
+let timer = 0;
+
 function setup() {
   randomSeed(seed);
   mySize = 900;
@@ -106,6 +108,8 @@ function generateBg() {
 }
 
 function draw() {
+
+  timer += 1;
 
   let dayColor = color(135, 206, 235); // day
   let nightColor = color(25, 25, 112); // night
@@ -351,17 +355,27 @@ class Apple {
     this.ratio = settings.ratio;
   }
 
-  display(settings) {
-    push();
-    translate(this.x, this.y)
-    rotate(this.angle)
-    stroke(25,50,90);
-    fill(settings.c1);
-    arc(0, 0, this.d, this.d, -(PI * (1 - this.ratio)) + PI, (PI * (1 - this.ratio)) + PI, OPEN, CHORD);
-    fill(settings.c2);
-    arc(0, 0, this.d, this.d, -PI * this.ratio, PI * this.ratio, OPEN, CHORD);
-    pop();
-  }
+  getColorByTimer() {
+    if (timer < 100) {
+        return color(0, 255, 0); // green
+    } else if (timer >= 100 && timer < 200) {
+        return color(255, 0, 0); // red
+    } else {
+        return color(255, 255, 0); // yellow
+    }
+}
+
+display(settings) {
+  push();
+  translate(this.x, this.y)
+  rotate(this.angle)
+  stroke(25, 50, 90);
+  fill(this.getColorByTimer());
+  arc(0, 0, this.d, this.d, -(PI * (1 - this.ratio)) + PI, (PI * (1 - this.ratio)) + PI, OPEN, CHORD);
+  fill(settings.c2);
+  arc(0, 0, this.d, this.d, -PI * this.ratio, PI * this.ratio, OPEN, CHORD);
+  pop();
+}
 
 }
 
