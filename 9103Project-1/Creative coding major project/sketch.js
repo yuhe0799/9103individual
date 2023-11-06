@@ -1,24 +1,22 @@
 // Initialize global variables
-var ranges;
+let ranges;
 let seed = Math.random() * 200;
-var mySize;
+let mySize;
 let str_wei = 0;
 let x_space;
 let color1, color2;
 let colorselet = [];
 let plus, margin;
 let filter1;
-
 let xCoor = 0;
 
-let cycleCounter = 0; // Initializes the loop counter
-
-let timer = 0;
+let cycleCounter = 0;
+let fullCycles = 0;
 
 function setup() {
   randomSeed(seed);
   mySize = 900;
-  createCanvas(600, 800);
+  createCanvas(windowWidth, windowHeight);
   colorselet[0] = "#1a1a1a";
   colorselet[1] = "#abadc5";
   colorselet[2] = "#abbcc3";
@@ -90,8 +88,6 @@ function generateBg() {
     drawingContext.shadowBlur = 0;
 
     // Display the final frame
-    //noLoop();
-    //noLoop();
     noLoop();
     noLoop();
     blendMode(BLEND);
@@ -108,9 +104,6 @@ function generateBg() {
 }
 
 function draw() {
-
-  timer += 1;
-
   let dayColor = color(135, 206, 235); // day
   let nightColor = color(25, 25, 112); // night
 
@@ -120,6 +113,12 @@ function draw() {
 
   // Update cycle counter
   cycleCounter = (cycleCounter + 1) % 360;
+
+  if (cycleCounter == 0) {
+    fullCycles++;  // Increments fullCycles each time a cycle is completed
+  }
+
+
   strokeWeight(3);
   //Left Branch
   let apple1 = new Apple(294, 330, 27, PI / 2, { ratio: 0.43, c1: color(12, 133, 88), c2: color(175, 67, 67) });
@@ -259,7 +258,10 @@ function draw() {
   //tree trunk
   strokeWeight(3);
   let Apple1 = new Apple(210, 580, 60, 29.85, { ratio: 0.6, c1: color(12, 133, 88), c2: color(175, 67, 67) });
+  
   Apple1.display({ ratio: 0.6, c1: color(12, 133, 88), c2: color(175, 67, 67) });
+
+
 
   let Apple2 = new Apple(255, 585, 30, 29.85, { ratio: 0.6, c1: color(175, 67, 67), c2: color(12, 133, 88) });
   Apple2.display({ ratio: 0.6, c1: color(175, 67, 67), c2: color(12, 133, 88) });
@@ -328,6 +330,10 @@ function draw() {
 
 }
 
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);  // Resize the canvas to match the new window size
+}
+
 //line class for branch
 class lines {
   constructor(x1, y1, x2, y2) {
@@ -345,38 +351,39 @@ class lines {
   }
 }
 
-//class of apple
+
+
 class Apple {
   constructor(x, y, d, angle, settings) {
-    this.x = x;
-    this.y = y;
-    this.d = d;
-    this.angle = angle;
-    this.ratio = settings.ratio;
+      this.x = x;
+      this.y = y;
+      this.d = d;
+      this.angle = angle;
+      this.ratio = settings.ratio;
+
   }
 
   getColorByTimer() {
-    if (timer < 100) {
+    if (fullCycles < 2) {
         return color(0, 255, 0); // green
-    } else if (timer >= 100 && timer < 200) {
+    } else if (fullCycles >= 2 && fullCycles < 4) {
         return color(255, 0, 0); // red
     } else {
         return color(255, 255, 0); // yellow
     }
 }
 
-display(settings) {
-  push();
-  translate(this.x, this.y)
-  rotate(this.angle)
-  stroke(25, 50, 90);
-  fill(this.getColorByTimer());
-  arc(0, 0, this.d, this.d, -(PI * (1 - this.ratio)) + PI, (PI * (1 - this.ratio)) + PI, OPEN, CHORD);
-  fill(settings.c2);
-  arc(0, 0, this.d, this.d, -PI * this.ratio, PI * this.ratio, OPEN, CHORD);
-  pop();
-}
-
+  display(settings) {
+      push();
+      translate(this.x, this.y)
+      rotate(this.angle)
+      stroke(25, 50, 90);
+      fill(this.getColorByTimer());
+      arc(0, 0, this.d, this.d, -(PI * (1 - this.ratio)) + PI, (PI * (1 - this.ratio)) + PI, OPEN, CHORD);
+      fill(settings.c2);
+      arc(0, 0, this.d, this.d, -PI * this.ratio, PI * this.ratio, OPEN, CHORD);
+      pop();
+  }
 }
 
 // Filter constructor   Code Inspiration Source.：https://p5js.org/reference/#/p5/filter
